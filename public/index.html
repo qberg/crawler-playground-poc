@@ -12,17 +12,16 @@
         margin: 0;
         padding: 0;
       }
-
       :root {
         --bg: #f9f9f8;
         --surface: #ffffff;
         --border: rgba(0, 0, 0, 0.1);
         --border-mid: rgba(0, 0, 0, 0.18);
         --text: #1a1a18;
-        --text-secondary: #6b6b67;
-        --text-tertiary: #9b9b96;
-        --radius-md: 8px;
-        --radius-lg: 12px;
+        --text-2: #6b6b67;
+        --text-3: #9b9b96;
+        --r-md: 8px;
+        --r-lg: 12px;
         --green: #3b6d11;
         --green-bg: #eaf3de;
         --blue: #185fa5;
@@ -39,7 +38,6 @@
         --mono: "SF Mono", "Fira Mono", monospace;
         --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
-
       @media (prefers-color-scheme: dark) {
         :root {
           --bg: #1a1a18;
@@ -47,8 +45,8 @@
           --border: rgba(255, 255, 255, 0.1);
           --border-mid: rgba(255, 255, 255, 0.18);
           --text: #f0f0ec;
-          --text-secondary: #a0a09b;
-          --text-tertiary: #70706b;
+          --text-2: #a0a09b;
+          --text-3: #70706b;
           --green: #97c459;
           --green-bg: #173404;
           --blue: #85b7eb;
@@ -64,7 +62,6 @@
           --red: #f09595;
         }
       }
-
       body {
         font-family: var(--sans);
         background: var(--bg);
@@ -72,13 +69,11 @@
         font-size: 15px;
         line-height: 1.6;
       }
-
       .layout {
-        max-width: 860px;
+        max-width: 900px;
         margin: 0 auto;
         padding: 2rem 1.5rem 4rem;
       }
-
       h1 {
         font-size: 20px;
         font-weight: 500;
@@ -86,56 +81,47 @@
       }
       .subtitle {
         font-size: 13px;
-        color: var(--text-secondary);
+        color: var(--text-2);
         margin-bottom: 1.75rem;
       }
-
       .card {
         background: var(--surface);
         border: 0.5px solid var(--border);
-        border-radius: var(--radius-lg);
+        border-radius: var(--r-lg);
         padding: 1.25rem;
+        margin-bottom: 1rem;
       }
-
-      .input-section {
-        margin-bottom: 1.25rem;
-      }
-
       textarea {
         width: 100%;
-        height: 110px;
+        height: 80px;
         resize: vertical;
         font-family: var(--mono);
         font-size: 13px;
         padding: 10px 12px;
         border: 0.5px solid var(--border);
-        border-radius: var(--radius-md);
+        border-radius: var(--r-md);
         background: var(--bg);
         color: var(--text);
         margin-bottom: 10px;
-        line-height: 1.6;
       }
       textarea:focus {
         outline: none;
         border-color: var(--border-mid);
       }
-
-      .actions {
+      .row {
         display: flex;
         gap: 8px;
         align-items: center;
       }
-
       button {
-        padding: 8px 18px;
+        padding: 7px 16px;
         font-size: 13px;
         font-weight: 500;
         border: 0.5px solid var(--border-mid);
-        border-radius: var(--radius-md);
+        border-radius: var(--r-md);
         background: transparent;
         color: var(--text);
         cursor: pointer;
-        transition: background 0.1s;
       }
       button:hover {
         background: var(--bg);
@@ -156,66 +142,89 @@
       button.primary:hover {
         opacity: 0.88;
       }
-
       .hint {
         font-size: 12px;
-        color: var(--text-tertiary);
+        color: var(--text-3);
         margin-left: auto;
       }
-
       .section-label {
         font-size: 11px;
         font-weight: 500;
         letter-spacing: 0.06em;
         text-transform: uppercase;
-        color: var(--text-tertiary);
+        color: var(--text-3);
         margin: 1.75rem 0 0.75rem;
       }
-
       .summary-row {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
         margin-bottom: 1.25rem;
       }
-      .sum-chip {
+      .chip {
         font-size: 12px;
-        padding: 4px 10px;
+        padding: 3px 10px;
         border-radius: 20px;
         border: 0.5px solid var(--border);
-        background: var(--surface);
-        color: var(--text-secondary);
+        color: var(--text-2);
       }
-      .sum-chip b {
+      .chip b {
         color: var(--text);
         font-weight: 500;
       }
-
-      .url-card {
-        background: var(--surface);
-        border: 0.5px solid var(--border);
-        border-radius: var(--radius-lg);
-        padding: 1rem 1.25rem;
-        margin-bottom: 10px;
+      .spinner {
+        width: 12px;
+        height: 12px;
+        flex-shrink: 0;
+        border: 1.5px solid var(--border-mid);
+        border-top-color: var(--text-2);
+        border-radius: 50%;
+        animation: spin 0.7s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+      .dot.ok {
+        background: var(--green);
+      }
+      .dot.err {
+        background: var(--red);
+      }
+      .status-line {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        color: var(--text-2);
+        min-height: 20px;
       }
 
-      .url-card-header {
+      .source-block {
+        margin-bottom: 1.5rem;
+      }
+      .source-header {
         display: flex;
         align-items: center;
         gap: 10px;
+        padding: 0.75rem 1.25rem;
+        background: var(--surface);
+        border: 0.5px solid var(--border);
+        border-radius: var(--r-lg);
         margin-bottom: 8px;
-        flex-wrap: wrap;
       }
-      .hostname {
+      .source-name {
         font-size: 14px;
         font-weight: 500;
         flex: 1;
-        min-width: 0;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
       }
-
       .tier-badge {
         font-size: 11px;
         font-weight: 500;
@@ -241,72 +250,48 @@
       }
       .t0 {
         background: var(--bg);
-        color: var(--text-tertiary);
+        color: var(--text-3);
+      }
+
+      .article-card {
+        background: var(--surface);
         border: 0.5px solid var(--border);
+        border-radius: var(--r-md);
+        padding: 0.875rem 1.25rem;
+        margin-bottom: 8px;
+        margin-left: 1.5rem;
       }
-
-      .status-line {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 12px;
-        color: var(--text-secondary);
-        min-height: 20px;
+      .article-title {
+        font-size: 13px;
+        font-weight: 500;
+        margin-bottom: 6px;
+        color: var(--text);
       }
-
-      .spinner {
-        width: 12px;
-        height: 12px;
-        flex-shrink: 0;
-        border: 1.5px solid var(--border-mid);
-        border-top-color: var(--text-secondary);
-        border-radius: 50%;
-        animation: spin 0.7s linear infinite;
-      }
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
-
-      .dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        flex-shrink: 0;
-      }
-      .dot.ok {
-        background: var(--green);
-      }
-      .dot.err {
-        background: var(--red);
-      }
-
       .meta-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 8px;
-        margin-top: 10px;
+        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+        gap: 6px;
+        margin-top: 8px;
       }
       .meta-box {
         background: var(--bg);
-        border-radius: var(--radius-md);
-        padding: 8px 10px;
+        border-radius: var(--r-md);
+        padding: 6px 8px;
       }
       .meta-lbl {
-        font-size: 11px;
-        color: var(--text-tertiary);
-        margin-bottom: 2px;
+        font-size: 10px;
+        color: var(--text-3);
+        margin-bottom: 1px;
       }
       .meta-val {
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 500;
       }
       .bar {
         height: 3px;
         border-radius: 2px;
         background: var(--border);
-        margin-top: 5px;
+        margin-top: 4px;
         overflow: hidden;
       }
       .bar-fill {
@@ -314,41 +299,27 @@
         border-radius: 2px;
         transition: width 0.5s ease;
       }
-      .bar-fill.quality {
+      .bar-q {
         background: var(--blue);
       }
-      .bar-fill.relevance {
+      .bar-r {
         background: var(--teal);
       }
-
       .kw-list {
         display: flex;
         flex-wrap: wrap;
-        gap: 5px;
-        margin-top: 10px;
+        gap: 4px;
+        margin-top: 8px;
       }
       .kw {
         font-size: 11px;
-        padding: 2px 8px;
+        padding: 1px 7px;
         border-radius: 20px;
         background: var(--bg);
-        color: var(--text-secondary);
+        color: var(--text-2);
         border: 0.5px solid var(--border);
       }
-
-      .entity-list {
-        margin-top: 8px;
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-      }
-      .entity-row {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 12px;
-      }
-      .ent-type {
+      .event-badge {
         font-size: 10px;
         padding: 1px 6px;
         border-radius: 20px;
@@ -356,83 +327,115 @@
         color: var(--purple);
         font-weight: 500;
       }
-
-      .relevance-reason {
-        font-size: 12px;
-        color: var(--text-secondary);
-        margin-top: 8px;
-        font-style: italic;
+      .entity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        margin-top: 6px;
       }
-      .rss-url {
+      .entity-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
         font-size: 11px;
-        color: var(--text-tertiary);
-        font-family: var(--mono);
-        margin-top: 4px;
-        word-break: break-all;
       }
-
+      .ent-type {
+        font-size: 10px;
+        padding: 1px 5px;
+        border-radius: 20px;
+        background: var(--teal-bg);
+        color: var(--teal);
+        font-weight: 500;
+      }
       .toggle-link {
-        font-size: 12px;
-        color: var(--text-tertiary);
+        font-size: 11px;
+        color: var(--text-3);
         cursor: pointer;
         text-decoration: underline;
         text-underline-offset: 2px;
-        margin-top: 10px;
+        margin-top: 8px;
         display: inline-block;
       }
       .extracted-block {
         display: none;
         margin-top: 8px;
-        font-size: 12px;
+        font-size: 11px;
         font-family: var(--mono);
-        color: var(--text-secondary);
+        color: var(--text-2);
         background: var(--bg);
-        border-radius: var(--radius-md);
+        border-radius: var(--r-md);
         padding: 10px;
-        max-height: 180px;
+        max-height: 160px;
         overflow-y: auto;
         white-space: pre-wrap;
         word-break: break-word;
         border: 0.5px solid var(--border);
       }
-
       .error-msg {
         font-size: 12px;
         color: var(--red);
         margin-top: 6px;
       }
 
-      .cluster-card {
+      .story-card {
         background: var(--surface);
         border: 0.5px solid var(--border);
-        border-radius: var(--radius-lg);
-        padding: 0.875rem 1.25rem;
+        border-radius: var(--r-lg);
+        padding: 1rem 1.25rem;
+        margin-bottom: 10px;
+      }
+      .story-header {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
         margin-bottom: 8px;
       }
-      .cluster-label {
-        font-size: 13px;
+      .story-title {
+        font-size: 14px;
         font-weight: 500;
-        margin-bottom: 6px;
+        flex: 1;
       }
-      .cluster-item {
+      .conf-badge {
+        font-size: 11px;
+        padding: 2px 8px;
+        border-radius: 20px;
+        white-space: nowrap;
+      }
+      .conf-high {
+        background: var(--green-bg);
+        color: var(--green);
+      }
+      .conf-mid {
+        background: var(--amber-bg);
+        color: var(--amber);
+      }
+      .conf-low {
+        background: var(--bg);
+        color: var(--text-3);
+        border: 0.5px solid var(--border);
+      }
+      .story-reason {
+        font-size: 12px;
+        color: var(--text-2);
+        font-style: italic;
+        margin-bottom: 8px;
+      }
+      .story-article {
         display: flex;
         align-items: center;
         gap: 8px;
         font-size: 12px;
-        color: var(--text-secondary);
-        padding: 3px 0;
+        padding: 4px 0;
+        border-top: 0.5px solid var(--border);
+        color: var(--text-2);
       }
-      .cluster-item::before {
-        content: "";
-        width: 4px;
-        height: 4px;
-        border-radius: 50%;
-        background: var(--border-mid);
-        flex-shrink: 0;
+      .story-article:first-of-type {
+        border-top: none;
+        padding-top: 0;
       }
-      .cluster-topic {
-        color: var(--text-tertiary);
-        font-size: 11px;
+      .story-src {
+        font-size: 10px;
+        color: var(--text-3);
       }
 
       #results {
@@ -444,38 +447,40 @@
     <div class="layout">
       <h1>Crawler playground</h1>
       <p class="subtitle">
-        Tier detection → URL extraction → NLP analysis → clustering
+        Source URL → discover articles → extract → NLP → proto-story clustering
       </p>
 
-      <div class="card input-section">
+      <div class="card">
         <textarea
           id="url-input"
-          placeholder="https://thehindu.com&#10;https://yourstory.com&#10;https://startuptn.in&#10;https://inc42.com"
+          placeholder="https://thehindu.com&#10;https://yourstory.com"
         ></textarea>
-        <div class="actions">
+        <div class="row">
           <button class="primary" id="run-btn" onclick="run()">
             Run pipeline
           </button>
           <button onclick="clearAll()">Clear</button>
-          <span class="hint">One URL per line · max 10</span>
+          <span class="hint">1–3 source URLs · one per line</span>
         </div>
       </div>
 
       <div id="results">
         <div id="summary-row" class="summary-row"></div>
-        <div class="section-label">Per-URL results</div>
-        <div id="url-cards"></div>
-        <div id="cluster-section" style="display: none">
-          <div class="section-label">Clusters</div>
-          <div id="cluster-cards"></div>
+
+        <div class="section-label">Articles</div>
+        <div id="article-area"></div>
+
+        <div id="story-section" style="display: none">
+          <div class="section-label">Proto-stories</div>
+          <div id="story-cards"></div>
         </div>
       </div>
     </div>
 
     <script>
-      const state = { results: [], running: false };
+      const state = { sources: [], articles: [], running: false };
 
-      function hostname(url) {
+      function hn(url) {
         try {
           return new URL(url).hostname.replace("www.", "");
         } catch {
@@ -483,246 +488,271 @@
         }
       }
 
-      function tierClass(tier) {
-        return ["t0", "t1", "t2", "t3", "t4"][tier] || "t0";
+      function tierClass(t) {
+        return ["t0", "t1", "t2", "t3", "t4"][t] || "t0";
+      }
+
+      function confClass(c) {
+        if (c >= 0.75) return "conf-high";
+        if (c >= 0.45) return "conf-mid";
+        return "conf-low";
       }
 
       function updateSummary() {
-        const r = state.results;
-        const done = r.filter((x) => x.done).length;
-        const t1 = r.filter((x) => x.tier?.tier === 1).length;
-        const t2 = r.filter((x) => x.tier?.tier === 2).length;
-        const t3 = r.filter((x) => x.tier?.tier === 3).length;
-        const nlpDone = r.filter((x) => x.nlp);
+        const total = state.articles.length;
+        const done = state.articles.filter((a) => a.done).length;
+        const good = state.articles.filter((a) => a.nlp).length;
+        const nlpDone = state.articles.filter((a) => a.nlp);
         const avgRel = nlpDone.length
           ? (
-              nlpDone.reduce((a, x) => a + x.nlp.relevanceScore, 0) /
+              nlpDone.reduce((s, a) => s + a.nlp.relevanceScore, 0) /
               nlpDone.length
             ).toFixed(1)
           : null;
 
         document.getElementById("summary-row").innerHTML = [
-          `<span class="sum-chip"><b>${done}/${r.length}</b> done</span>`,
-          t1 ? `<span class="sum-chip">RSS <b>${t1}</b></span>` : "",
-          t2 ? `<span class="sum-chip">HTML <b>${t2}</b></span>` : "",
-          t3 ? `<span class="sum-chip">JS <b>${t3}</b></span>` : "",
+          `<span class="chip"><b>${done}/${total}</b> articles</span>`,
+          good ? `<span class="chip"><b>${good}</b> extracted</span>` : "",
           avgRel
-            ? `<span class="sum-chip">avg relevance <b>${avgRel}/10</b></span>`
+            ? `<span class="chip">avg relevance <b>${avgRel}/10</b></span>`
             : "",
         ].join("");
       }
 
-      function renderCard(res) {
-        const tierLabel = res.tier?.label || "detecting...";
-        const tc = tierClass(res.tier?.tier || 0);
-
-        let html = `
-    <div class="url-card-header">
-      <span class="hostname">${hostname(res.url)}</span>
-      <span class="tier-badge ${tc}">${tierLabel}</span>
-    </div>`;
-
-        if (res.tier?.rssUrl) {
-          html += `<div class="rss-url">${res.tier.rssUrl}</div>`;
+      function renderArticleCard(a) {
+        let html = "";
+        if (a.extraction?.title) {
+          html += `<div class="article-title">${a.extraction.title}</div>`;
         }
+        html += `<div class="status-line" id="sl-${a.id}"><div class="spinner"></div><span>Queued</span></div>`;
 
-        html += `<div class="status-line" id="sl-${res.id}">
-    <div class="spinner"></div><span>Processing...</span>
-  </div>`;
-
-        if (res.extraction) {
+        if (a.extraction) {
           html += `<div class="meta-grid">
       <div class="meta-box">
-        <div class="meta-lbl">Words extracted</div>
-        <div class="meta-val">${res.extraction.wordCount.toLocaleString()}</div>
+        <div class="meta-lbl">Words</div>
+        <div class="meta-val">${a.extraction.wordCount.toLocaleString()}</div>
       </div>
       <div class="meta-box">
-        <div class="meta-lbl">Quality score</div>
-        <div class="meta-val">${res.extraction.qualityScore}/10</div>
-        <div class="bar"><div class="bar-fill quality" style="width:${res.extraction.qualityScore * 10}%"></div></div>
+        <div class="meta-lbl">Quality</div>
+        <div class="meta-val">${a.extraction.qualityScore}/10</div>
+        <div class="bar"><div class="bar-fill bar-q" style="width:${a.extraction.qualityScore * 10}%"></div></div>
       </div>
       ${
-        res.nlp
+        a.nlp
           ? `<div class="meta-box">
         <div class="meta-lbl">TN relevance</div>
-        <div class="meta-val">${res.nlp.relevanceScore}/10</div>
-        <div class="bar"><div class="bar-fill relevance" style="width:${res.nlp.relevanceScore * 10}%"></div></div>
+        <div class="meta-val">${a.nlp.relevanceScore}/10</div>
+        <div class="bar"><div class="bar-fill bar-r" style="width:${a.nlp.relevanceScore * 10}%"></div></div>
       </div>`
           : ""
       }
     </div>`;
         }
 
-        if (res.nlp) {
-          html += `<div class="kw-list">${res.nlp.keywords.map((k) => `<span class="kw">${k}</span>`).join("")}</div>`;
-          if (res.nlp.entities?.length) {
-            html += `<div class="entity-list">${res.nlp.entities
-              .slice(0, 5)
+        if (a.nlp) {
+          html += `<div class="kw-list">
+      <span class="event-badge">${a.nlp.eventType || "other"}</span>
+      ${a.nlp.keywords.map((k) => `<span class="kw">${k}</span>`).join("")}
+    </div>`;
+          if (a.nlp.entities?.length) {
+            html += `<div class="entity-list">${a.nlp.entities
+              .slice(0, 4)
               .map(
                 (e) =>
                   `<div class="entity-row"><span class="ent-type">${e.type}</span><span>${e.name}</span></div>`,
               )
               .join("")}</div>`;
           }
-          if (res.nlp.relevanceReason) {
-            html += `<p class="relevance-reason">${res.nlp.relevanceReason}</p>`;
-          }
         }
 
-        if (res.extraction?.markdown) {
-          html += `<span class="toggle-link" onclick="toggleExtracted('${res.id}')">show extracted text</span>
-    <div class="extracted-block" id="ex-${res.id}">${res.extraction.markdown.replace(/</g, "&lt;").replace(/>/g, "&gt;")}</div>`;
+        if (a.extraction?.markdown) {
+          html += `<span class="toggle-link" onclick="toggleEx('${a.id}')">show extracted text</span>
+    <div class="extracted-block" id="ex-${a.id}">${a.extraction.markdown.replace(/</g, "&lt;")}</div>`;
         }
 
-        if (res.error) {
-          html += `<p class="error-msg">${res.error}</p>`;
-        }
-
+        if (a.error) html += `<p class="error-msg">${a.error}</p>`;
         return html;
       }
 
-      function setStatus(id, html) {
-        const el = document.getElementById("sl-" + id);
-        if (el) el.innerHTML = html;
-      }
-
-      function toggleExtracted(id) {
+      function toggleEx(id) {
         const el = document.getElementById("ex-" + id);
-        const link = el?.previousElementSibling;
+        const lk = el?.previousElementSibling;
         if (!el) return;
         const shown = el.style.display === "block";
         el.style.display = shown ? "none" : "block";
-        if (link)
-          link.textContent = shown
+        if (lk)
+          lk.textContent = shown
             ? "show extracted text"
             : "hide extracted text";
       }
 
-      async function processUrl(res) {
-        const cardEl = document.getElementById("c-" + res.id);
-
+      async function processArticle(a, tier) {
         try {
-          const response = await fetch("/api/analyze", {
+          const r = await fetch("/api/analyze", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ url: res.url }),
+            body: JSON.stringify({ url: a.url, tier }),
           });
-          const data = await response.json();
-          Object.assign(res, data);
+          const data = await r.json();
+          Object.assign(a, data);
         } catch (e) {
-          res.error = e.message;
+          a.error = e.message;
         }
+        a.done = true;
 
-        res.done = true;
-        if (cardEl) {
-          cardEl.innerHTML = renderCard(res);
-          const sl = document.getElementById("sl-" + res.id);
-          if (sl) {
-            if (res.error) {
-              sl.innerHTML = `<div class="dot err"></div><span style="color:var(--red)">${res.error}</span>`;
-            } else {
-              sl.innerHTML = `<div class="dot ok"></div><span>${res.extraction?.wordCount.toLocaleString()} words extracted</span>`;
-            }
-          }
+        const card = document.getElementById("c-" + a.id);
+        if (card) card.innerHTML = renderArticleCard(a);
+        const sl = document.getElementById("sl-" + a.id);
+        if (sl) {
+          sl.innerHTML = a.error
+            ? `<div class="dot err"></div><span style="color:var(--red)">${a.error}</span>`
+            : `<div class="dot ok"></div><span>${a.extraction?.wordCount.toLocaleString()} words · ${a.nlp?.topicSummary || ""}</span>`;
         }
-
         updateSummary();
       }
 
       async function run() {
         if (state.running) return;
-
-        const raw = document
+        const urls = document
           .getElementById("url-input")
           .value.trim()
           .split("\n")
           .map((u) => u.trim())
           .filter((u) => u.startsWith("http"))
-          .slice(0, 10);
-
-        if (!raw.length) return;
+          .slice(0, 3);
+        if (!urls.length) return;
 
         state.running = true;
-        state.results = raw.map((url, i) => ({
-          id: "u" + i,
-          url,
-          tier: null,
-          extraction: null,
-          nlp: null,
-          done: false,
-          error: null,
-        }));
-
+        state.sources = [];
+        state.articles = [];
         document.getElementById("run-btn").disabled = true;
         document.getElementById("results").style.display = "block";
-        document.getElementById("cluster-section").style.display = "none";
+        document.getElementById("story-section").style.display = "none";
+        document.getElementById("article-area").innerHTML = "";
+        document.getElementById("story-cards").innerHTML = "";
+        document.getElementById("summary-row").innerHTML = "";
 
-        const cardsEl = document.getElementById("url-cards");
-        cardsEl.innerHTML = state.results
-          .map(
-            (r) => `
-    <div class="url-card" id="c-${r.id}">
-      <div class="url-card-header">
-        <span class="hostname">${hostname(r.url)}</span>
-        <span class="tier-badge t0">detecting...</span>
+        const area = document.getElementById("article-area");
+
+        for (const sourceUrl of urls) {
+          const sourceBlock = document.createElement("div");
+          sourceBlock.className = "source-block";
+          sourceBlock.innerHTML = `
+      <div class="source-header" id="sh-${btoa(sourceUrl).slice(0, 8)}">
+        <span class="source-name">${hn(sourceUrl)}</span>
+        <span class="tier-badge t0">discovering...</span>
+        <div class="spinner"></div>
       </div>
-      <div class="status-line" id="sl-${r.id}"><div class="spinner"></div><span>Queued</span></div>
-    </div>`,
-          )
-          .join("");
+      <div id="articles-${btoa(sourceUrl).slice(0, 8)}"></div>`;
+          area.appendChild(sourceBlock);
 
-        updateSummary();
-
-        const queue = [...state.results];
-        const workers = Array.from(
-          { length: Math.min(3, queue.length) },
-          async () => {
-            while (queue.length) {
-              const res = queue.shift();
-              if (res) await processUrl(res);
-            }
-          },
-        );
-        await Promise.all(workers);
-
-        const successful = state.results.filter((r) => r.nlp && !r.error);
-        if (successful.length >= 2) {
-          const sec = document.getElementById("cluster-section");
-          const cards = document.getElementById("cluster-cards");
-          sec.style.display = "block";
-          cards.innerHTML = `<div class="url-card"><div class="status-line"><div class="spinner"></div><span>Clustering ${successful.length} sources...</span></div></div>`;
-
+          let tier = 2;
           try {
-            const res = await fetch("/api/cluster", {
+            const r = await fetch("/api/discover", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ results: successful }),
+              body: JSON.stringify({ url: sourceUrl }),
             });
-            const data = await res.json();
+            const data = await r.json();
+            tier = data.tier?.tier || 2;
 
-            if (data.clusters?.length) {
-              cards.innerHTML = data.clusters
-                .map(
-                  (c) => `
-          <div class="cluster-card">
-            <div class="cluster-label">${c.label}</div>
-            ${c.indices
-              .map((i) => successful[i])
+            const sh = document.getElementById(
+              "sh-" + btoa(sourceUrl).slice(0, 8),
+            );
+            if (sh)
+              sh.innerHTML = `
+        <span class="source-name">${hn(sourceUrl)}</span>
+        <span class="tier-badge ${tierClass(tier)}">${data.tier?.label || "unknown"}</span>
+        <span style="font-size:12px;color:var(--text-3)">${data.articles.length} articles found</span>`;
+
+            const articlesEl = document.getElementById(
+              "articles-" + btoa(sourceUrl).slice(0, 8),
+            );
+            const newArticles = data.articles.map((url, i) => ({
+              id: "a" + state.articles.length + i,
+              url,
+              sourceUrl,
+              done: false,
+              extraction: null,
+              nlp: null,
+              error: null,
+            }));
+            state.articles.push(...newArticles);
+
+            articlesEl.innerHTML = newArticles
+              .map(
+                (a) => `
+        <div class="article-card" id="c-${a.id}">
+          <div style="font-size:12px;color:var(--text-3);margin-bottom:6px;font-family:var(--mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.url}</div>
+          <div class="status-line" id="sl-${a.id}"><div class="spinner"></div><span>Queued</span></div>
+        </div>`,
+              )
+              .join("");
+
+            updateSummary();
+
+            const queue = [...newArticles];
+            const workers = Array.from(
+              { length: Math.min(3, queue.length) },
+              async () => {
+                while (queue.length) {
+                  const a = queue.shift();
+                  if (a) await processArticle(a, tier);
+                }
+              },
+            );
+            await Promise.all(workers);
+          } catch (e) {
+            const sh = document.getElementById(
+              "sh-" + btoa(sourceUrl).slice(0, 8),
+            );
+            if (sh)
+              sh.innerHTML = `<span class="source-name">${hn(sourceUrl)}</span><span style="font-size:12px;color:var(--red)">${e.message}</span>`;
+          }
+        }
+
+        const good = state.articles.filter((a) => a.nlp && !a.error);
+        if (good.length >= 2) {
+          const sec = document.getElementById("story-section");
+          const cards = document.getElementById("story-cards");
+          sec.style.display = "block";
+          cards.innerHTML = `<div class="card"><div class="status-line"><div class="spinner"></div><span>Clustering ${good.length} articles into proto-stories...</span></div></div>`;
+
+          try {
+            const r = await fetch("/api/cluster", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ articles: good }),
+            });
+            const data = await r.json();
+
+            if (data.stories?.length) {
+              cards.innerHTML = data.stories
+                .map((s) => {
+                  const conf = s.confidence || 0;
+                  return `<div class="story-card">
+            <div class="story-header">
+              <span class="story-title">${s.title}</span>
+              <span class="conf-badge ${confClass(conf)}">${Math.round(conf * 100)}% conf</span>
+            </div>
+            <p class="story-reason">${s.reason || ""}</p>
+            ${s.indices
+              .map((i) => good[i])
               .filter(Boolean)
               .map(
-                (r) => `
-              <div class="cluster-item">
-                <span>${hostname(r.url)}</span>
-                <span class="cluster-topic">${r.nlp?.topicSummary || ""}</span>
+                (a) => `
+              <div class="story-article">
+                <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.extraction?.title || hn(a.url)}</span>
+                <span class="story-src">${hn(a.url)}</span>
               </div>`,
               )
               .join("")}
-          </div>`,
-                )
+          </div>`;
+                })
                 .join("");
             } else {
               cards.innerHTML =
-                '<p style="font-size:13px;color:var(--text-secondary)">Not enough data to cluster.</p>';
+                '<p style="font-size:13px;color:var(--text-2)">Not enough overlapping articles to form stories.</p>';
             }
           } catch (e) {
             cards.innerHTML = `<p class="error-msg">Clustering failed: ${e.message}</p>`;
@@ -736,9 +766,10 @@
       function clearAll() {
         document.getElementById("url-input").value = "";
         document.getElementById("results").style.display = "none";
-        document.getElementById("url-cards").innerHTML = "";
-        document.getElementById("cluster-cards").innerHTML = "";
-        state.results = [];
+        document.getElementById("article-area").innerHTML = "";
+        document.getElementById("story-cards").innerHTML = "";
+        state.sources = [];
+        state.articles = [];
       }
     </script>
   </body>
