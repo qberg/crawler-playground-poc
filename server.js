@@ -1,17 +1,20 @@
-require('dotenv').config();
-const express = require('express');
-const fetch = require('node-fetch');
-const cors = require('cors');
-const path = require('path');
+import 'dotenv/config';
+import { serve } from '@hono/node-server';
+import { serveStatic } from '@hono/node-server/serve-static';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
 
-const app = express();
-app.use(cors());
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+const app = new Hono();
+
+// Middleware
+app.use('/*', cors());
+
+// Serve static frontend from the 'public' directory
+app.use('/*', serveStatic({ root: './public' }));
 
 const FC_KEY = process.env.FIRECRAWL_API_KEY;
 const OAI_KEY = process.env.OPENAI_API_KEY;
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 3000;
 
 const C = {
   reset: '\x1b[0m',
@@ -51,7 +54,7 @@ async function detectTier(url) {
   for (const rssUrl of rssProbes) {
     try {
       const r = await fetch(rssUrl, {
-        timeout: 4000,
+        signal: AbortSignal.timeout(4000),
         headers: { 'User-Agent': 'Mozilla/5.0 (compatible; CrawlerPlayground/1.0)' },
       });
       if (r.ok) {
@@ -64,7 +67,7 @@ async function detectTier(url) {
 
   try {
     const r = await fetch(url, {
-      timeout: 8000,
+      signal: AbortSignal.timeout(8000),
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible; CrawlerPlayground/1.0)' },
     });
     const html = await r.text();
@@ -101,7 +104,7 @@ async function discoverArticles(sourceUrl, tier, rssUrl, limit = 8) {
     log('info', sourceUrl, `Fetching RSS → ${rssUrl}`);
     try {
       const r = await fetch(rssUrl, {
-        timeout: 8000,
+        signal: AbortSignal.timeout(8000),
         headers: { 'User-Agent': 'Mozilla/5.0 (compatible; CrawlerPlayground/1.0)' },
       });
       const xml = await r.text();
@@ -124,7 +127,7 @@ async function discoverArticles(sourceUrl, tier, rssUrl, limit = 8) {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + FC_KEY },
       body: JSON.stringify({ url: sourceUrl, limit: 30 }),
-      timeout: 20000,
+      signal: AbortSignal.timeout(20000),
     });
     if (!r.ok) throw new Error(`Firecrawl map ${r.status}`);
     const data = await r.json();
@@ -164,7 +167,7 @@ async function extractArticle(url, tier) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + FC_KEY },
     body: JSON.stringify(body),
-    timeout: 30000,
+    signal: AbortSignal.timeout(30000),
   });
 
   if (!r.ok) throw new Error(`Firecrawl ${r.status}`);
@@ -217,7 +220,7 @@ entities max 5, keywords exactly 5.`;
       response_format: { type: 'json_object' },
       max_tokens: 500,
     }),
-    timeout: 20000,
+    signal: AbortSignal.timeout(20000),
   });
 
   if (!r.ok) throw new Error(`OpenAI ${r.status}`);
@@ -269,7 +272,7 @@ Rules:
       response_format: { type: 'json_object' },
       max_tokens: 600,
     }),
-    timeout: 20000,
+    signal: AbortSignal.timeout(20000),
   });
 
   if (!r.ok) throw new Error(`OpenAI cluster ${r.status}`);
@@ -279,69 +282,80 @@ Rules:
 
 // ─── Routes ───────────────────────────────────────────────────────────────────
 
-app.post('/api/discover', async (req, res) => {
-  const { url } = req.body;
-  if (!url) return res.status(400).json({ error: 'url required' });
-
+app.post('/api/discover', async (c) => {
   try {
+    const { url } = await c.req.json();
+    if (!url) return c.json({ error: 'url required' }, 400);
+
     log('info', url, 'Detecting tier...');
     const tier = await detectTier(url);
     log('success', url, tier.label);
 
     const articles = await discoverArticles(url, tier.tier, tier.rssUrl);
-    res.json({ tier, articles });
+    return c.json({ tier, articles });
   } catch (e) {
-    log('error', url, e.message);
-    res.status(500).json({ error: e.message });
+    log('error', '—', e.message);
+    return c.json({ error: e.message }, 500);
   }
 });
 
-app.post('/api/analyze', async (req, res) => {
-  const { url, tier } = req.body;
-  if (!url) return res.status(400).json({ error: 'url required' });
-
-  const result = { url, extraction: null, nlp: null, error: null };
-
+app.post('/api/analyze', async (c) => {
   try {
-    log('info', url, 'Extracting...');
-    result.extraction = await extractArticle(url, tier || 2);
-    log(
-      'success',
-      url,
-      `${result.extraction.wordCount} words · quality ${result.extraction.qualityScore}/10`
-    );
+    const { url, tier } = await c.req.json();
+    if (!url) return c.json({ error: 'url required' }, 400);
 
-    log('info', url, 'Analyzing...');
-    result.nlp = await analyzeArticle(url, result.extraction.title, result.extraction.markdown);
-    log('success', url, `relevance ${result.nlp.relevanceScore}/10 · "${result.nlp.topicSummary}"`);
+    const result = { url, extraction: null, nlp: null, error: null };
+
+    try {
+      log('info', url, 'Extracting...');
+      result.extraction = await extractArticle(url, tier || 2);
+      log(
+        'success',
+        url,
+        `${result.extraction.wordCount} words · quality ${result.extraction.qualityScore}/10`
+      );
+
+      log('info', url, 'Analyzing...');
+      result.nlp = await analyzeArticle(url, result.extraction.title, result.extraction.markdown);
+      log(
+        'success',
+        url,
+        `relevance ${result.nlp.relevanceScore}/10 · "${result.nlp.topicSummary}"`
+      );
+    } catch (e) {
+      result.error = e.message;
+      log('error', url, e.message);
+    }
+
+    return c.json(result);
   } catch (e) {
-    result.error = e.message;
-    log('error', url, e.message);
+    return c.json({ error: e.message }, 500);
   }
-
-  res.json(result);
 });
 
-app.post('/api/cluster', async (req, res) => {
-  const { articles } = req.body;
-  const good = articles.filter((a) => a.nlp && !a.error);
-  if (good.length < 2) return res.json({ stories: [] });
-
+app.post('/api/cluster', async (c) => {
   try {
+    const { articles } = await c.req.json();
+    const good = articles.filter((a) => a.nlp && !a.error);
+    if (good.length < 2) return c.json({ stories: [] });
+
     log('info', null, `Clustering ${good.length} articles into proto-stories...`);
     const result = await clusterArticles(good);
     log('success', null, `${result.stories.length} proto-stories formed`);
-    res.json({ stories: result.stories, articles: good });
+
+    return c.json({ stories: result.stories, articles: good });
   } catch (e) {
     log('error', null, e.message);
-    res.status(500).json({ error: e.message });
+    return c.json({ error: e.message }, 500);
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`\n${C.bold}${C.cyan}Crawler Playground${C.reset}`);
+// ─── Bootstrapping ────────────────────────────────────────────────────────────
+
+serve({ fetch: app.fetch, port: PORT }, (info) => {
+  console.log(`\n${C.bold}${C.cyan}Crawler Playground (Hono)${C.reset}`);
   console.log(`${C.dim}─────────────────────────────${C.reset}`);
-  console.log(`${C.green}✓${C.reset} http://localhost:${PORT}`);
+  console.log(`${C.green}✓${C.reset} http://localhost:${info.port}`);
   console.log(`${C.dim}Firecrawl: ${FC_KEY ? FC_KEY.slice(0, 8) + '...' : 'MISSING'}${C.reset}`);
   console.log(
     `${C.dim}OpenAI:    ${OAI_KEY ? OAI_KEY.slice(0, 8) + '...' : 'MISSING'}${C.reset}\n`

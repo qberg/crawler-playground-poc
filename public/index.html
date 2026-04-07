@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Crawler Playground</title>
     <style>
+      /* Base Resets */
       *,
       *::before,
       *::after {
@@ -12,430 +13,483 @@
         margin: 0;
         padding: 0;
       }
+
+      /* Design System Variables */
       :root {
-        --bg: #f9f9f8;
+        --bg: #ffffff;
         --surface: #ffffff;
-        --border: rgba(0, 0, 0, 0.1);
-        --border-mid: rgba(0, 0, 0, 0.18);
-        --text: #1a1a18;
-        --text-2: #6b6b67;
-        --text-3: #9b9b96;
-        --r-md: 8px;
-        --r-lg: 12px;
-        --green: #3b6d11;
-        --green-bg: #eaf3de;
-        --blue: #185fa5;
-        --blue-bg: #e6f1fb;
-        --amber: #854f0b;
-        --amber-bg: #faeeda;
-        --pink: #993556;
-        --pink-bg: #fbeaf0;
-        --purple: #534ab7;
-        --purple-bg: #eeedfe;
-        --teal: #0f6e56;
-        --teal-bg: #e1f5ee;
-        --red: #a32d2d;
-        --mono: "SF Mono", "Fira Mono", monospace;
-        --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        --border: #111111;
+        --border-light: #e5e5e5;
+        --text: #111111;
+        --text-muted: #555555;
+
+        /* Accents */
+        --accent: #2563eb;
+        --success: #16a34a;
+        --warning: #d97706;
+        --danger: #dc2626;
+
+        /* Typography */
+        --font-sans:
+          "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        --font-mono: "JetBrains Mono", "SF Mono", "Fira Code", monospace;
+
+        /* Hard Shadows */
+        --shadow: 3px 3px 0px var(--border);
+        --shadow-hover: 1px 1px 0px var(--border);
       }
+
+      /* Dark Mode Adaptations */
       @media (prefers-color-scheme: dark) {
         :root {
-          --bg: #1a1a18;
-          --surface: #242422;
-          --border: rgba(255, 255, 255, 0.1);
-          --border-mid: rgba(255, 255, 255, 0.18);
-          --text: #f0f0ec;
-          --text-2: #a0a09b;
-          --text-3: #70706b;
-          --green: #97c459;
-          --green-bg: #173404;
-          --blue: #85b7eb;
-          --blue-bg: #042c53;
-          --amber: #ef9f27;
-          --amber-bg: #412402;
-          --pink: #ed93b1;
-          --pink-bg: #4b1528;
-          --purple: #afa9ec;
-          --purple-bg: #26215c;
-          --teal: #5dcaa5;
-          --teal-bg: #04342c;
-          --red: #f09595;
+          --bg: #0a0a0a;
+          --surface: #141414;
+          --border: #333333;
+          --border-light: #222222;
+          --text: #f5f5f5;
+          --text-muted: #a3a3a3;
+          --accent: #60a5fa;
+          --success: #4ade80;
+          --warning: #fbbf24;
+          --danger: #f87171;
+          --shadow: 3px 3px 0px var(--text);
+          --shadow-hover: 1px 1px 0px var(--text);
         }
       }
+
       body {
-        font-family: var(--sans);
+        font-family: var(--font-sans);
         background: var(--bg);
         color: var(--text);
         font-size: 15px;
         line-height: 1.6;
+        -webkit-font-smoothing: antialiased;
       }
+
       .layout {
-        max-width: 900px;
+        max-width: 960px;
         margin: 0 auto;
-        padding: 2rem 1.5rem 4rem;
+        padding: 3rem 1.5rem 6rem;
       }
+
       h1 {
-        font-size: 20px;
-        font-weight: 500;
-        margin-bottom: 4px;
+        font-size: 28px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.25rem;
       }
+
       .subtitle {
-        font-size: 13px;
-        color: var(--text-2);
-        margin-bottom: 1.75rem;
+        font-size: 14px;
+        font-family: var(--font-mono);
+        color: var(--text-muted);
+        margin-bottom: 2.5rem;
+        border-bottom: 1px solid var(--border);
+        padding-bottom: 1rem;
       }
+
       .card {
         background: var(--surface);
-        border: 0.5px solid var(--border);
-        border-radius: var(--r-lg);
-        padding: 1.25rem;
-        margin-bottom: 1rem;
+        border: 2px solid var(--border);
+        box-shadow: var(--shadow);
+        padding: 1.5rem;
+        margin-bottom: 2rem;
       }
+
       textarea {
         width: 100%;
-        height: 80px;
+        height: 100px;
         resize: vertical;
-        font-family: var(--mono);
-        font-size: 13px;
-        padding: 10px 12px;
-        border: 0.5px solid var(--border);
-        border-radius: var(--r-md);
+        font-family: var(--font-mono);
+        font-size: 14px;
+        padding: 12px;
+        border: 2px solid var(--border);
         background: var(--bg);
         color: var(--text);
-        margin-bottom: 10px;
+        margin-bottom: 12px;
       }
+
       textarea:focus {
         outline: none;
-        border-color: var(--border-mid);
+        border-color: var(--accent);
       }
+
       .row {
         display: flex;
-        gap: 8px;
+        gap: 12px;
         align-items: center;
       }
+
       button {
-        padding: 7px 16px;
-        font-size: 13px;
-        font-weight: 500;
-        border: 0.5px solid var(--border-mid);
-        border-radius: var(--r-md);
-        background: transparent;
+        padding: 8px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        border: 2px solid var(--border);
+        background: var(--surface);
         color: var(--text);
         cursor: pointer;
+        box-shadow: 2px 2px 0px var(--border);
+        transition: all 0.1s ease;
       }
-      button:hover {
-        background: var(--bg);
+
+      button:hover:not(:disabled) {
+        transform: translate(1px, 1px);
+        box-shadow: 1px 1px 0px var(--border);
       }
-      button:active {
-        transform: scale(0.98);
+
+      button:active:not(:disabled) {
+        transform: translate(2px, 2px);
+        box-shadow: 0px 0px 0px var(--border);
       }
+
       button:disabled {
-        opacity: 0.4;
+        opacity: 0.5;
         cursor: not-allowed;
-        transform: none;
       }
+
       button.primary {
         background: var(--text);
-        color: var(--surface);
-        border-color: transparent;
+        color: var(--bg);
       }
-      button.primary:hover {
-        opacity: 0.88;
-      }
+
       .hint {
         font-size: 12px;
-        color: var(--text-3);
+        font-family: var(--font-mono);
+        color: var(--text-muted);
         margin-left: auto;
       }
+
       .section-label {
-        font-size: 11px;
-        font-weight: 500;
-        letter-spacing: 0.06em;
+        font-size: 12px;
+        font-weight: 700;
+        font-family: var(--font-mono);
         text-transform: uppercase;
-        color: var(--text-3);
-        margin: 1.75rem 0 0.75rem;
+        letter-spacing: 0.05em;
+        color: var(--text);
+        margin: 2.5rem 0 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--border);
       }
+
       .summary-row {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 1.25rem;
+        gap: 12px;
+        margin-bottom: 2rem;
       }
+
       .chip {
-        font-size: 12px;
-        padding: 3px 10px;
-        border-radius: 20px;
-        border: 0.5px solid var(--border);
-        color: var(--text-2);
+        font-size: 13px;
+        font-family: var(--font-mono);
+        padding: 4px 12px;
+        border: 1px solid var(--border);
+        background: var(--surface);
       }
+
       .chip b {
-        color: var(--text);
-        font-weight: 500;
+        font-weight: 700;
+        color: var(--accent);
       }
+
       .spinner {
-        width: 12px;
-        height: 12px;
-        flex-shrink: 0;
-        border: 1.5px solid var(--border-mid);
-        border-top-color: var(--text-2);
+        width: 14px;
+        height: 14px;
+        border: 2px solid var(--border-light);
+        border-top-color: var(--text);
         border-radius: 50%;
-        animation: spin 0.7s linear infinite;
+        animation: spin 0.8s linear infinite;
       }
+
       @keyframes spin {
         to {
           transform: rotate(360deg);
         }
       }
-      .dot {
-        width: 7px;
-        height: 7px;
-        border-radius: 50%;
-        flex-shrink: 0;
-      }
-      .dot.ok {
-        background: var(--green);
-      }
-      .dot.err {
-        background: var(--red);
-      }
+
       .status-line {
         display: flex;
         align-items: center;
         gap: 8px;
-        font-size: 12px;
-        color: var(--text-2);
-        min-height: 20px;
+        font-size: 13px;
+        font-family: var(--font-mono);
+        color: var(--text-muted);
+        margin-top: 8px;
+      }
+
+      .dot {
+        width: 8px;
+        height: 8px;
+        flex-shrink: 0;
+      }
+      .dot.ok {
+        background: var(--success);
+      }
+      .dot.err {
+        background: var(--danger);
       }
 
       .source-block {
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
       }
+
       .source-header {
         display: flex;
         align-items: center;
-        gap: 10px;
-        padding: 0.75rem 1.25rem;
+        gap: 12px;
+        padding: 10px 16px;
         background: var(--surface);
-        border: 0.5px solid var(--border);
-        border-radius: var(--r-lg);
-        margin-bottom: 8px;
+        border: 1px solid var(--border);
+        border-bottom: 3px solid var(--border);
+        margin-bottom: 12px;
       }
+
       .source-name {
-        font-size: 14px;
-        font-weight: 500;
+        font-size: 15px;
+        font-weight: 700;
+        font-family: var(--font-mono);
         flex: 1;
       }
+
       .tier-badge {
         font-size: 11px;
-        font-weight: 500;
-        padding: 3px 9px;
-        border-radius: 20px;
-        white-space: nowrap;
-      }
-      .t1 {
-        background: var(--green-bg);
-        color: var(--green);
-      }
-      .t2 {
-        background: var(--blue-bg);
-        color: var(--blue);
-      }
-      .t3 {
-        background: var(--amber-bg);
-        color: var(--amber);
-      }
-      .t4 {
-        background: var(--pink-bg);
-        color: var(--pink);
-      }
-      .t0 {
-        background: var(--bg);
-        color: var(--text-3);
+        font-family: var(--font-mono);
+        font-weight: 600;
+        padding: 2px 8px;
+        border: 1px solid currentColor;
+        text-transform: uppercase;
       }
 
       .article-card {
         background: var(--surface);
-        border: 0.5px solid var(--border);
-        border-radius: var(--r-md);
-        padding: 0.875rem 1.25rem;
-        margin-bottom: 8px;
+        border: 1px solid var(--border);
+        padding: 1rem 1.5rem;
+        margin-bottom: 12px;
         margin-left: 1.5rem;
+        border-left: 4px solid var(--border);
       }
+
       .article-title {
-        font-size: 13px;
-        font-weight: 500;
-        margin-bottom: 6px;
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 8px;
         color: var(--text);
       }
+
       .meta-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
-        gap: 6px;
-        margin-top: 8px;
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        gap: 12px;
+        margin-top: 12px;
       }
+
       .meta-box {
         background: var(--bg);
-        border-radius: var(--r-md);
-        padding: 6px 8px;
+        border: 1px solid var(--border-light);
+        padding: 8px 12px;
       }
+
       .meta-lbl {
-        font-size: 10px;
-        color: var(--text-3);
-        margin-bottom: 1px;
+        font-size: 11px;
+        font-family: var(--font-mono);
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 4px;
       }
+
       .meta-val {
-        font-size: 12px;
-        font-weight: 500;
+        font-size: 14px;
+        font-weight: 600;
       }
+
       .bar {
-        height: 3px;
-        border-radius: 2px;
-        background: var(--border);
-        margin-top: 4px;
-        overflow: hidden;
+        height: 4px;
+        background: var(--border-light);
+        margin-top: 6px;
+        width: 100%;
       }
+
       .bar-fill {
         height: 100%;
-        border-radius: 2px;
+        background: var(--text);
         transition: width 0.5s ease;
       }
       .bar-q {
-        background: var(--blue);
+        background: var(--accent);
       }
       .bar-r {
-        background: var(--teal);
+        background: var(--warning);
       }
+
       .kw-list {
         display: flex;
         flex-wrap: wrap;
-        gap: 4px;
-        margin-top: 8px;
+        gap: 6px;
+        margin-top: 12px;
       }
+
       .kw {
-        font-size: 11px;
-        padding: 1px 7px;
-        border-radius: 20px;
+        font-size: 12px;
+        font-family: var(--font-mono);
+        padding: 2px 8px;
         background: var(--bg);
-        color: var(--text-2);
-        border: 0.5px solid var(--border);
+        border: 1px dashed var(--border);
+        color: var(--text-muted);
       }
+
       .event-badge {
-        font-size: 10px;
-        padding: 1px 6px;
-        border-radius: 20px;
-        background: var(--purple-bg);
-        color: var(--purple);
-        font-weight: 500;
+        font-size: 12px;
+        font-family: var(--font-mono);
+        font-weight: 600;
+        padding: 2px 8px;
+        background: var(--text);
+        color: var(--bg);
       }
+
       .entity-list {
-        display: flex;
-        flex-direction: column;
-        gap: 3px;
-        margin-top: 6px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        margin-top: 12px;
+        border-top: 1px solid var(--border-light);
+        padding-top: 12px;
       }
+
       .entity-row {
         display: flex;
         align-items: center;
-        gap: 6px;
-        font-size: 11px;
+        gap: 8px;
+        font-size: 13px;
       }
+
       .ent-type {
         font-size: 10px;
-        padding: 1px 5px;
-        border-radius: 20px;
-        background: var(--teal-bg);
-        color: var(--teal);
-        font-weight: 500;
+        font-family: var(--font-mono);
+        padding: 2px 6px;
+        border: 1px solid var(--border);
+        text-transform: uppercase;
       }
+
       .toggle-link {
-        font-size: 11px;
-        color: var(--text-3);
+        font-size: 12px;
+        font-family: var(--font-mono);
+        font-weight: 600;
+        color: var(--accent);
         cursor: pointer;
         text-decoration: underline;
-        text-underline-offset: 2px;
-        margin-top: 8px;
+        text-underline-offset: 4px;
+        margin-top: 12px;
         display: inline-block;
       }
+
       .extracted-block {
         display: none;
-        margin-top: 8px;
-        font-size: 11px;
-        font-family: var(--mono);
-        color: var(--text-2);
+        margin-top: 12px;
+        font-size: 13px;
+        font-family: var(--font-mono);
+        color: var(--text);
         background: var(--bg);
-        border-radius: var(--r-md);
-        padding: 10px;
-        max-height: 160px;
+        padding: 16px;
+        max-height: 250px;
         overflow-y: auto;
         white-space: pre-wrap;
         word-break: break-word;
-        border: 0.5px solid var(--border);
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--accent);
       }
+
       .error-msg {
-        font-size: 12px;
-        color: var(--red);
-        margin-top: 6px;
+        font-size: 13px;
+        font-family: var(--font-mono);
+        color: var(--danger);
+        margin-top: 8px;
+        padding-left: 12px;
+        border-left: 2px solid var(--danger);
       }
 
       .story-card {
         background: var(--surface);
-        border: 0.5px solid var(--border);
-        border-radius: var(--r-lg);
-        padding: 1rem 1.25rem;
-        margin-bottom: 10px;
+        border: 2px solid var(--border);
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        box-shadow: 2px 2px 0px var(--border);
       }
+
       .story-header {
         display: flex;
         align-items: flex-start;
-        gap: 10px;
-        margin-bottom: 8px;
+        justify-content: space-between;
+        gap: 12px;
+        margin-bottom: 12px;
       }
+
       .story-title {
-        font-size: 14px;
-        font-weight: 500;
-        flex: 1;
+        font-size: 18px;
+        font-weight: 700;
+        line-height: 1.3;
       }
+
       .conf-badge {
-        font-size: 11px;
-        padding: 2px 8px;
-        border-radius: 20px;
+        font-size: 12px;
+        font-family: var(--font-mono);
+        padding: 4px 8px;
+        border: 1px solid var(--border);
         white-space: nowrap;
       }
-      .conf-high {
-        background: var(--green-bg);
-        color: var(--green);
-      }
-      .conf-mid {
-        background: var(--amber-bg);
-        color: var(--amber);
-      }
-      .conf-low {
-        background: var(--bg);
-        color: var(--text-3);
-        border: 0.5px solid var(--border);
-      }
+
       .story-reason {
-        font-size: 12px;
-        color: var(--text-2);
-        font-style: italic;
-        margin-bottom: 8px;
+        font-size: 14px;
+        color: var(--text-muted);
+        margin-bottom: 16px;
+        border-left: 2px solid var(--border-light);
+        padding-left: 12px;
       }
+
       .story-article {
         display: flex;
         align-items: center;
-        gap: 8px;
-        font-size: 12px;
-        padding: 4px 0;
-        border-top: 0.5px solid var(--border);
-        color: var(--text-2);
+        justify-content: space-between;
+        gap: 12px;
+        font-size: 13px;
+        padding: 8px 0;
+        border-top: 1px dotted var(--border-light);
       }
-      .story-article:first-of-type {
-        border-top: none;
-        padding-top: 0;
-      }
+
       .story-src {
-        font-size: 10px;
-        color: var(--text-3);
+        font-size: 11px;
+        font-family: var(--font-mono);
+        color: var(--text-muted);
+        text-transform: uppercase;
+      }
+
+      /* * NEW: The "Visual Done" Banner Styles 
+       */
+      .done-banner {
+        background: var(--surface);
+        border: 2px solid var(--border);
+        border-left: 6px solid var(--success);
+        padding: 16px;
+        margin-top: 2rem;
+        font-family: var(--font-mono);
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        box-shadow: 2px 2px 0px var(--border);
+      }
+
+      .done-icon {
+        background: var(--success);
+        color: var(--bg);
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 14px;
       }
 
       #results {
@@ -445,10 +499,10 @@
   </head>
   <body>
     <div class="layout">
-      <h1>Crawler playground</h1>
-      <p class="subtitle">
-        Source URL → discover articles → extract → NLP → proto-story clustering
-      </p>
+      <h1>Crawler Playground</h1>
+      <div class="subtitle">
+        [ Pipeline: Source URL → Discover → Extract → NLP → Cluster ]
+      </div>
 
       <div class="card">
         <textarea
@@ -457,23 +511,25 @@
         ></textarea>
         <div class="row">
           <button class="primary" id="run-btn" onclick="run()">
-            Run pipeline
+            Run Pipeline
           </button>
           <button onclick="clearAll()">Clear</button>
-          <span class="hint">1–3 source URLs · one per line</span>
+          <span class="hint">1–3 source URLs · One per line</span>
         </div>
       </div>
 
       <div id="results">
         <div id="summary-row" class="summary-row"></div>
 
-        <div class="section-label">Articles</div>
+        <div class="section-label">Discovered Articles</div>
         <div id="article-area"></div>
 
         <div id="story-section" style="display: none">
-          <div class="section-label">Proto-stories</div>
+          <div class="section-label">Proto-Stories Generated</div>
           <div id="story-cards"></div>
         </div>
+
+        <div id="done-banner" style="display: none"></div>
       </div>
     </div>
 
@@ -488,14 +544,15 @@
         }
       }
 
-      function tierClass(t) {
-        return ["t0", "t1", "t2", "t3", "t4"][t] || "t0";
-      }
-
-      function confClass(c) {
-        if (c >= 0.75) return "conf-high";
-        if (c >= 0.45) return "conf-mid";
-        return "conf-low";
+      function tierColor(t) {
+        const colors = [
+          "var(--text-muted)",
+          "var(--success)",
+          "var(--accent)",
+          "var(--warning)",
+          "var(--danger)",
+        ];
+        return colors[t] || "var(--text-muted)";
       }
 
       function updateSummary() {
@@ -510,13 +567,11 @@
             ).toFixed(1)
           : null;
 
-        document.getElementById("summary-row").innerHTML = [
-          `<span class="chip"><b>${done}/${total}</b> articles</span>`,
-          good ? `<span class="chip"><b>${good}</b> extracted</span>` : "",
-          avgRel
-            ? `<span class="chip">avg relevance <b>${avgRel}/10</b></span>`
-            : "",
-        ].join("");
+        document.getElementById("summary-row").innerHTML = `
+          <span class="chip">Processed: <b>${done}/${total}</b></span>
+          ${good ? `<span class="chip">Extracted: <b>${good}</b></span>` : ""}
+          ${avgRel ? `<span class="chip">Avg Relevance: <b>${avgRel}/10</b></span>` : ""}
+        `;
       }
 
       function renderArticleCard(a) {
@@ -524,67 +579,76 @@
         if (a.extraction?.title) {
           html += `<div class="article-title">${a.extraction.title}</div>`;
         }
-        html += `<div class="status-line" id="sl-${a.id}"><div class="spinner"></div><span>Queued</span></div>`;
+        html += `<div class="status-line" id="sl-${a.id}"><div class="spinner"></div><span>Processing text...</span></div>`;
 
         if (a.extraction) {
-          html += `<div class="meta-grid">
-      <div class="meta-box">
-        <div class="meta-lbl">Words</div>
-        <div class="meta-val">${a.extraction.wordCount.toLocaleString()}</div>
-      </div>
-      <div class="meta-box">
-        <div class="meta-lbl">Quality</div>
-        <div class="meta-val">${a.extraction.qualityScore}/10</div>
-        <div class="bar"><div class="bar-fill bar-q" style="width:${a.extraction.qualityScore * 10}%"></div></div>
-      </div>
-      ${
-        a.nlp
-          ? `<div class="meta-box">
-        <div class="meta-lbl">TN relevance</div>
-        <div class="meta-val">${a.nlp.relevanceScore}/10</div>
-        <div class="bar"><div class="bar-fill bar-r" style="width:${a.nlp.relevanceScore * 10}%"></div></div>
-      </div>`
-          : ""
-      }
-    </div>`;
+          html += `
+            <div class="meta-grid">
+              <div class="meta-box">
+                <div class="meta-lbl">Words</div>
+                <div class="meta-val">${a.extraction.wordCount.toLocaleString()}</div>
+              </div>
+              <div class="meta-box">
+                <div class="meta-lbl">Quality</div>
+                <div class="meta-val">${a.extraction.qualityScore}/10</div>
+                <div class="bar"><div class="bar-fill bar-q" style="width:${a.extraction.qualityScore * 10}%"></div></div>
+              </div>
+              ${
+                a.nlp
+                  ? `
+              <div class="meta-box">
+                <div class="meta-lbl">Relevance</div>
+                <div class="meta-val">${a.nlp.relevanceScore}/10</div>
+                <div class="bar"><div class="bar-fill bar-r" style="width:${a.nlp.relevanceScore * 10}%"></div></div>
+              </div>`
+                  : ""
+              }
+            </div>
+          `;
         }
 
         if (a.nlp) {
-          html += `<div class="kw-list">
-      <span class="event-badge">${a.nlp.eventType || "other"}</span>
-      ${a.nlp.keywords.map((k) => `<span class="kw">${k}</span>`).join("")}
-    </div>`;
+          html += `
+            <div class="kw-list">
+              <span class="event-badge">${a.nlp.eventType || "Unclassified"}</span>
+              ${a.nlp.keywords.map((k) => `<span class="kw">${k}</span>`).join("")}
+            </div>
+          `;
           if (a.nlp.entities?.length) {
             html += `<div class="entity-list">${a.nlp.entities
               .slice(0, 4)
               .map(
-                (e) =>
-                  `<div class="entity-row"><span class="ent-type">${e.type}</span><span>${e.name}</span></div>`,
+                (e) => `
+                <div class="entity-row"><span class="ent-type">${e.type}</span><span>${e.name}</span></div>
+              `,
               )
               .join("")}</div>`;
           }
         }
 
         if (a.extraction?.markdown) {
-          html += `<span class="toggle-link" onclick="toggleEx('${a.id}')">show extracted text</span>
-    <div class="extracted-block" id="ex-${a.id}">${a.extraction.markdown.replace(/</g, "&lt;")}</div>`;
+          html += `
+            <span class="toggle-link" onclick="toggleEx('${a.id}')">[+] Show Source Markdown</span>
+            <div class="extracted-block" id="ex-${a.id}">${a.extraction.markdown.replace(/</g, "&lt;")}</div>
+          `;
         }
+        if (a.error) html += `<div class="error-msg">Error: ${a.error}</div>`;
 
-        if (a.error) html += `<p class="error-msg">${a.error}</p>`;
         return html;
       }
 
-      function toggleEx(id) {
+      window.toggleEx = function (id) {
         const el = document.getElementById("ex-" + id);
         const lk = el?.previousElementSibling;
         if (!el) return;
-        const shown = el.style.display === "block";
-        el.style.display = shown ? "none" : "block";
+
+        const isShown = el.style.display === "block";
+        el.style.display = isShown ? "none" : "block";
         if (lk)
-          lk.textContent = shown
-            ? "show extracted text"
-            : "hide extracted text";
-      }
+          lk.textContent = isShown
+            ? "[+] Show Source Markdown"
+            : "[-] Hide Source Markdown";
+      };
 
       async function processArticle(a, tier) {
         try {
@@ -602,17 +666,19 @@
 
         const card = document.getElementById("c-" + a.id);
         if (card) card.innerHTML = renderArticleCard(a);
+
         const sl = document.getElementById("sl-" + a.id);
         if (sl) {
           sl.innerHTML = a.error
-            ? `<div class="dot err"></div><span style="color:var(--red)">${a.error}</span>`
-            : `<div class="dot ok"></div><span>${a.extraction?.wordCount.toLocaleString()} words · ${a.nlp?.topicSummary || ""}</span>`;
+            ? `<div class="dot err"></div><span style="color:var(--danger)">Failed to extract</span>`
+            : `<div class="dot ok"></div><span>${a.extraction?.wordCount.toLocaleString()} words · ${a.nlp?.topicSummary || "Processed"}</span>`;
         }
         updateSummary();
       }
 
-      async function run() {
+      window.run = async function () {
         if (state.running) return;
+
         const urls = document
           .getElementById("url-input")
           .value.trim()
@@ -620,14 +686,17 @@
           .map((u) => u.trim())
           .filter((u) => u.startsWith("http"))
           .slice(0, 3);
+
         if (!urls.length) return;
 
         state.running = true;
         state.sources = [];
         state.articles = [];
+
         document.getElementById("run-btn").disabled = true;
         document.getElementById("results").style.display = "block";
         document.getElementById("story-section").style.display = "none";
+        document.getElementById("done-banner").style.display = "none"; // Hide done banner
         document.getElementById("article-area").innerHTML = "";
         document.getElementById("story-cards").innerHTML = "";
         document.getElementById("summary-row").innerHTML = "";
@@ -635,15 +704,18 @@
         const area = document.getElementById("article-area");
 
         for (const sourceUrl of urls) {
+          const sourceId = btoa(sourceUrl).slice(0, 8);
           const sourceBlock = document.createElement("div");
           sourceBlock.className = "source-block";
+
           sourceBlock.innerHTML = `
-      <div class="source-header" id="sh-${btoa(sourceUrl).slice(0, 8)}">
-        <span class="source-name">${hn(sourceUrl)}</span>
-        <span class="tier-badge t0">discovering...</span>
-        <div class="spinner"></div>
-      </div>
-      <div id="articles-${btoa(sourceUrl).slice(0, 8)}"></div>`;
+            <div class="source-header" id="sh-${sourceId}">
+              <span class="source-name">${hn(sourceUrl)}</span>
+              <span class="tier-badge">Discovering...</span>
+              <div class="spinner"></div>
+            </div>
+            <div id="articles-${sourceId}"></div>
+          `;
           area.appendChild(sourceBlock);
 
           let tier = 2;
@@ -656,18 +728,16 @@
             const data = await r.json();
             tier = data.tier?.tier || 2;
 
-            const sh = document.getElementById(
-              "sh-" + btoa(sourceUrl).slice(0, 8),
-            );
-            if (sh)
+            const sh = document.getElementById("sh-" + sourceId);
+            if (sh) {
               sh.innerHTML = `
-        <span class="source-name">${hn(sourceUrl)}</span>
-        <span class="tier-badge ${tierClass(tier)}">${data.tier?.label || "unknown"}</span>
-        <span style="font-size:12px;color:var(--text-3)">${data.articles.length} articles found</span>`;
+                <span class="source-name">${hn(sourceUrl)}</span>
+                <span class="tier-badge" style="color:${tierColor(tier)}">${data.tier?.label || "Unknown Tier"}</span>
+                <span style="font-size:12px;font-family:var(--font-mono);color:var(--text-muted)">[${data.articles.length} found]</span>
+              `;
+            }
 
-            const articlesEl = document.getElementById(
-              "articles-" + btoa(sourceUrl).slice(0, 8),
-            );
+            const articlesEl = document.getElementById("articles-" + sourceId);
             const newArticles = data.articles.map((url, i) => ({
               id: "a" + state.articles.length + i,
               url,
@@ -677,15 +747,17 @@
               nlp: null,
               error: null,
             }));
+
             state.articles.push(...newArticles);
 
             articlesEl.innerHTML = newArticles
               .map(
                 (a) => `
-        <div class="article-card" id="c-${a.id}">
-          <div style="font-size:12px;color:var(--text-3);margin-bottom:6px;font-family:var(--mono);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.url}</div>
-          <div class="status-line" id="sl-${a.id}"><div class="spinner"></div><span>Queued</span></div>
-        </div>`,
+              <div class="article-card" id="c-${a.id}">
+                <div style="font-size:12px;font-family:var(--font-mono);color:var(--text-muted);margin-bottom:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.url}</div>
+                <div class="status-line" id="sl-${a.id}"><div class="spinner"></div><span>In Queue...</span></div>
+              </div>
+            `,
               )
               .join("");
 
@@ -703,11 +775,10 @@
             );
             await Promise.all(workers);
           } catch (e) {
-            const sh = document.getElementById(
-              "sh-" + btoa(sourceUrl).slice(0, 8),
-            );
-            if (sh)
-              sh.innerHTML = `<span class="source-name">${hn(sourceUrl)}</span><span style="font-size:12px;color:var(--red)">${e.message}</span>`;
+            const sh = document.getElementById("sh-" + sourceId);
+            if (sh) {
+              sh.innerHTML = `<span class="source-name">${hn(sourceUrl)}</span><span style="font-size:12px;font-family:var(--font-mono);color:var(--danger)">Error: ${e.message}</span>`;
+            }
           }
         }
 
@@ -715,8 +786,13 @@
         if (good.length >= 2) {
           const sec = document.getElementById("story-section");
           const cards = document.getElementById("story-cards");
+
           sec.style.display = "block";
-          cards.innerHTML = `<div class="card"><div class="status-line"><div class="spinner"></div><span>Clustering ${good.length} articles into proto-stories...</span></div></div>`;
+          cards.innerHTML = `
+            <div class="card">
+              <div class="status-line"><div class="spinner"></div><span style="color:var(--text)">Clustering ${good.length} valid articles into stories...</span></div>
+            </div>
+          `;
 
           try {
             const r = await fetch("/api/cluster", {
@@ -729,48 +805,67 @@
             if (data.stories?.length) {
               cards.innerHTML = data.stories
                 .map((s) => {
-                  const conf = s.confidence || 0;
-                  return `<div class="story-card">
-            <div class="story-header">
-              <span class="story-title">${s.title}</span>
-              <span class="conf-badge ${confClass(conf)}">${Math.round(conf * 100)}% conf</span>
-            </div>
-            <p class="story-reason">${s.reason || ""}</p>
-            ${s.indices
-              .map((i) => good[i])
-              .filter(Boolean)
-              .map(
-                (a) => `
-              <div class="story-article">
-                <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.extraction?.title || hn(a.url)}</span>
-                <span class="story-src">${hn(a.url)}</span>
-              </div>`,
-              )
-              .join("")}
-          </div>`;
+                  const conf = Math.round((s.confidence || 0) * 100);
+                  return `
+                  <div class="story-card">
+                    <div class="story-header">
+                      <span class="story-title">${s.title}</span>
+                      <span class="conf-badge">${conf}% Match</span>
+                    </div>
+                    <p class="story-reason">${s.reason || "No reasoning provided by engine."}</p>
+                    ${s.indices
+                      .map((i) => good[i])
+                      .filter(Boolean)
+                      .map(
+                        (a) => `
+                      <div class="story-article">
+                        <span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500;">
+                          ${a.extraction?.title || hn(a.url)}
+                        </span>
+                        <span class="story-src">${hn(a.url)}</span>
+                      </div>
+                    `,
+                      )
+                      .join("")}
+                  </div>
+                `;
                 })
                 .join("");
             } else {
               cards.innerHTML =
-                '<p style="font-size:13px;color:var(--text-2)">Not enough overlapping articles to form stories.</p>';
+                '<div class="card"><p style="font-family:var(--font-mono);color:var(--text-muted)">[ No significant overlap found for clustering ]</p></div>';
             }
           } catch (e) {
-            cards.innerHTML = `<p class="error-msg">Clustering failed: ${e.message}</p>`;
+            cards.innerHTML = `<div class="error-msg">Clustering failed: ${e.message}</div>`;
           }
         }
 
+        // NEW: Render the Visual Done Banner
+        const doneBanner = document.getElementById("done-banner");
+        doneBanner.className = "done-banner";
+        doneBanner.style.display = "flex";
+        doneBanner.innerHTML = `
+          <div>
+            Pipeline Complete
+            <div style="font-size: 12px; font-weight: normal; color: var(--text-muted); margin-top: 2px;">
+              Successfully processed and analyzed ${good.length} out of ${state.articles.length} articles.
+            </div>
+          </div>
+        `;
+
         state.running = false;
         document.getElementById("run-btn").disabled = false;
-      }
+      };
 
-      function clearAll() {
+      window.clearAll = function () {
         document.getElementById("url-input").value = "";
         document.getElementById("results").style.display = "none";
         document.getElementById("article-area").innerHTML = "";
         document.getElementById("story-cards").innerHTML = "";
+        document.getElementById("done-banner").style.display = "none";
         state.sources = [];
         state.articles = [];
-      }
+      };
     </script>
   </body>
 </html>
