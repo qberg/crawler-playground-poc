@@ -1,10 +1,13 @@
-import { Hono } from 'hono';
-import { cors } from 'hono/cors';
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
 
-const app = new Hono();
+const app = express();
 
 // Middleware
-app.use('/*', cors());
+app.use(cors());
+app.use(express.json());
+app.use(express.static('public')); // Serves your index.html from the public folder
 
 const FC_KEY = process.env.FIRECRAWL_API_KEY;
 const OAI_KEY = process.env.OPENAI_API_KEY;
@@ -276,27 +279,27 @@ Rules:
 
 // ─── Routes ───────────────────────────────────────────────────────────────────
 
-app.post('/api/discover', async (c) => {
+app.post('/api/discover', async (req, res) => {
   try {
-    const { url } = await c.req.json();
-    if (!url) return c.json({ error: 'url required' }, 400);
+    const { url } = req.body;
+    if (!url) return res.status(400).json({ error: 'url required' });
 
     log('info', url, 'Detecting tier...');
     const tier = await detectTier(url);
     log('success', url, tier.label);
 
     const articles = await discoverArticles(url, tier.tier, tier.rssUrl);
-    return c.json({ tier, articles });
+    return res.json({ tier, articles });
   } catch (e) {
     log('error', '—', e.message);
-    return c.json({ error: e.message }, 500);
+    return res.status(500).json({ error: e.message });
   }
 });
 
-app.post('/api/analyze', async (c) => {
+app.post('/api/analyze', async (req, res) => {
   try {
-    const { url, tier } = await c.req.json();
-    if (!url) return c.json({ error: 'url required' }, 400);
+    const { url, tier } = req.body;
+    if (!url) return res.status(400).json({ error: 'url required' });
 
     const result = { url, extraction: null, nlp: null, error: null };
 
@@ -321,28 +324,36 @@ app.post('/api/analyze', async (c) => {
       log('error', url, e.message);
     }
 
-    return c.json(result);
+    return res.json(result);
   } catch (e) {
-    return c.json({ error: e.message }, 500);
+    return res.status(500).json({ error: e.message });
   }
 });
 
-app.post('/api/cluster', async (c) => {
+app.post('/api/cluster', async (req, res) => {
   try {
-    const { articles } = await c.req.json();
+    const { articles } = req.body;
     const good = articles.filter((a) => a.nlp && !a.error);
-    if (good.length < 2) return c.json({ stories: [] });
+    if (good.length < 2) return res.json({ stories: [] });
 
     log('info', null, `Clustering ${good.length} articles into proto-stories...`);
     const result = await clusterArticles(good);
     log('success', null, `${result.stories.length} proto-stories formed`);
 
-    return c.json({ stories: result.stories, articles: good });
+    return res.json({ stories: result.stories, articles: good });
   } catch (e) {
     log('error', null, e.message);
-    return c.json({ error: e.message }, 500);
+    return res.status(500).json({ error: e.message });
   }
 });
 
 // ─── Bootstrapping ────────────────────────────────────────────────────────────
-export default app;
+app.listen(PORT, () => {
+  console.log(`\n${C.bold}${C.cyan}Crawler Playground (Express)${C.reset}`);
+  console.log(`${C.dim}─────────────────────────────${C.reset}`);
+  console.log(`${C.green}✓${C.reset} http://localhost:${PORT}`);
+  console.log(`${C.dim}Firecrawl: ${FC_KEY ? FC_KEY.slice(0, 8) + '...' : 'MISSING'}${C.reset}`);
+  console.log(
+    `${C.dim}OpenAI:    ${OAI_KEY ? OAI_KEY.slice(0, 8) + '...' : 'MISSING'}${C.reset}\n`
+  );
+});
