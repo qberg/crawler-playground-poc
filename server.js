@@ -1,6 +1,4 @@
 import 'dotenv/config';
-import { serve } from '@hono/node-server';
-import { serveStatic } from '@hono/node-server/serve-static';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 
@@ -8,9 +6,6 @@ const app = new Hono();
 
 // Middleware
 app.use('/*', cors());
-
-// Serve static frontend from the 'public' directory
-app.use('/*', serveStatic({ root: './public' }));
 
 const FC_KEY = process.env.FIRECRAWL_API_KEY;
 const OAI_KEY = process.env.OPENAI_API_KEY;
@@ -351,13 +346,4 @@ app.post('/api/cluster', async (c) => {
 });
 
 // ─── Bootstrapping ────────────────────────────────────────────────────────────
-
-serve({ fetch: app.fetch, port: PORT }, (info) => {
-  console.log(`\n${C.bold}${C.cyan}Crawler Playground (Hono)${C.reset}`);
-  console.log(`${C.dim}─────────────────────────────${C.reset}`);
-  console.log(`${C.green}✓${C.reset} http://localhost:${info.port}`);
-  console.log(`${C.dim}Firecrawl: ${FC_KEY ? FC_KEY.slice(0, 8) + '...' : 'MISSING'}${C.reset}`);
-  console.log(
-    `${C.dim}OpenAI:    ${OAI_KEY ? OAI_KEY.slice(0, 8) + '...' : 'MISSING'}${C.reset}\n`
-  );
-});
+export default app;
